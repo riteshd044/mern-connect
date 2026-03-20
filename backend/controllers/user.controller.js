@@ -26,7 +26,7 @@ export const followUnfollowUser = async (req, res) => {
 
 		if (id === req.user._id.toString()) return res.status(400).json({ error: "You can't follow/unfollow yourself" });
 
-		if (!userToModify || !currentUser) return res.status(400).json({ error: "User not found" });
+		if (!userToModify || !currentUser) return res.status(404).json({ error: "User not found" });
 
 		const isFollowing = currentUser.following.includes(id);
 
@@ -62,7 +62,7 @@ export const getSuggestedUsers = async (req, res) => {
 
 		const usersFollowedByMe = await User.findById(userId).select("following"); // {  _id: "65ab...",  following: ["id1", "id2", "id3"]}
 
-		const users = await User.aggregate([
+		const users = await User.aggregate([ //  processes data through multiple pipeline stages to filter, group, join, and transform documents, similar to complex SQL queries.
 			{
 				$match: {
 					_id : {$ne : userId}
@@ -71,7 +71,7 @@ export const getSuggestedUsers = async (req, res) => {
 			{ $sample: { size: 10 }}
 		]);
 
-		//Filter out the users that I'm already following
+		// Filter out the users that I'm already following
 		const filterUsers = users.filter((user) => !usersFollowedByMe.following.includes(user._id));
 		const suggestedUsers = filterUsers.slice(0,4); // If end is greater than array length → it stops at last element
 
