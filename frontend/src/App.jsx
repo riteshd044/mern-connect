@@ -31,8 +31,6 @@ const App = () => {
 		retry: false,
 	})
 
-	console.log("authUser is here:", authUser);
-
 	if (isLoading) {
 		return (
 			<div className='h-screen flex justify-center items-center'>

@@ -39,7 +39,7 @@ const Sidebar = () => {
 			<div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
                 <Link to='/' className='flex justify-center md:justify-start items-center pt-5'>
                     <XSvg className='px-2 w-12 h-12 rounded-full hover:bg-stone-900' />
-                    <span className='text-2xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 bg-clip-text text-transparent tracking-wide'>
+                    <span className='hidden md:block text-2xl font-extrabold bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-600 bg-clip-text text-transparent tracking-wide'>
                         onnect
                     </span>
                 </Link>
