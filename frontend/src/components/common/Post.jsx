@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { formatPostDate } from "../../utils/date";
 
 const Post = ({ post }) => {
 	const [comment, setComment] = useState("");
@@ -35,10 +36,10 @@ const Post = ({ post }) => {
 			queryClient.invalidateQueries({queryKey: ["posts"]});
 		}
 	})
-	
+
 	const postOwner = post.user;
 
-	const { mutate:likeUnlike , isPending: isLiking} = useMutation({
+	const { mutate:likeUnlike, isPending: isLiking} = useMutation({
 		mutationFn: async() => {
 			try{
 			    const res = await fetch(`/api/posts/like/${post._id}`,{
@@ -73,9 +74,37 @@ const Post = ({ post }) => {
 
 	const isMyPost = authUser._id === post.user._id;
 
-	const formattedDate = "1h";
+	const formattedDate = formatPostDate(post.createdAt);
 
-	const isCommenting = false;
+	const {mutate: commentPost, isPending: isCommenting} = useMutation({
+		mutationFn: async() => {
+			try{
+				const res = await fetch(`/api/posts/comment/${post._id}`, {
+					method: "POST",
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify({ text: comment })
+				});
+				const data = await res.json();
+				if (!res.ok) throw new Error(data.error || "Something went wrong");
+				return data;
+			}catch(error){
+				console.error(error.message);
+				throw error;
+			}
+		},
+		onSuccess: (postData) => {
+			toast.success("Comment posted successfully");
+			setComment("");
+			// queryClient.invalidateQueries({queryKey: ["posts"]});
+
+			queryClient.setQueryData(["posts"], (oldData) => {
+				return oldData.map((p) => {
+					if(p._id === post._id) return postData;
+					return p;
+				})
+			})
+		}
+	});
 
 	const handleDeletePost = () => {
 		deletePost();
@@ -83,6 +112,8 @@ const Post = ({ post }) => {
 
 	const handlePostComment = (e) => {
 		e.preventDefault();
+		if (isCommenting) return;
+		commentPost();
 	};
 
 	const handleLikePost = () => {
