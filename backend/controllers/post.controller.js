@@ -155,10 +155,10 @@ export const getAllPosts = async (req, res) => {
 };
 
 export const getLikedPosts = async (req, res) => {
-	const userId = req.params.id;
+	const { username } = req.params;
 
 	try {
-		const user = await User.findById(userId);
+		const user = await User.findOne({username});
 		if (!user) return res.status(404).json({ error: "User not found" });
 
 		const likedPosts = await Post.find({_id: {$in: user.likedPosts}})

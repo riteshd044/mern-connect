@@ -2,16 +2,17 @@ import { CiImageOn } from "react-icons/ci";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { useEffect, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
+import useAuthUser from "../../hooks/useAuthUser";
 
 const CreatePost = () => {
 	const [text, setText] = useState("");
 	const [img, setImg] = useState(null);
 	const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-	const { data:authUser } = useQuery({queryKey: ["authUser"]});
+	const { authUser } = useAuthUser();
 	const queryClient = useQueryClient();
 
 	const { mutate: createPost, isPending, isError, error } = useMutation({

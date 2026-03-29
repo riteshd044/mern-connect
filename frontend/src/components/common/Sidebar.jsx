@@ -5,8 +5,9 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import useAuthUser from "../../hooks/useAuthUser";
 
 const Sidebar = () => {
 	const queryClient = useQueryClient();
@@ -17,9 +18,9 @@ const Sidebar = () => {
 				const res = await fetch('/api/auth/logout',{
 					method: "POST"
 				})
-				const authUser = await res.json();
-				if(!res.ok) throw new Error(authUser.error || "Something went wrong");
-				return authUser;
+				const data = await res.json();
+				if(!res.ok) throw new Error(data.error || "Something went wrong");
+				return data;
 			}catch(error){
 				console.error(error);
 				throw error;
@@ -32,7 +33,7 @@ const Sidebar = () => {
 		}
 	});
 
-	const { data: authUser } = useQuery({ queryKey: ["authUser"] });
+	const { authUser } = useAuthUser();
 
 	return (
 		<div className='md:flex-[2_2_0] w-18 max-w-52'>

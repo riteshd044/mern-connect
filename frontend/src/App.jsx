@@ -9,27 +9,11 @@ import ProfilePage from "./pages/profile/ProfilePage";
 
 import Sidebar from "./components/common/Sidebar";
 import RightPanel from "./components/common/RightPannel";
-import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
+import useAuthUser from "./hooks/useAuthUser";
 
 const App = () => {
-	const {data: authUser, isLoading} = useQuery({
-		// we use querykey to give a unique name to our query and refer to it later
-		queryKey: ["authUser"],
-		queryFn: async () => {
-			try{
-				const res = await fetch("/api/auth/me");
-				const data = await res.json();
-				if(data.error) return null;
-				if(!res.ok) throw new Error(data.error || "Something went wrong");
-				return data;
-			}catch(error){
-				console.log(error);
-				throw error;
-			}
-		},
-		retry: false,
-	})
+	const { authUser, isLoading } = useAuthUser();
 
 	if (isLoading) {
 		return (
