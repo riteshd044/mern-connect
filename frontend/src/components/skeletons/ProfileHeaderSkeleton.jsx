@@ -4,7 +4,6 @@ const ProfileHeaderSkeleton = () => {
 			<div className='flex gap-2 items-center'>
 				<div className='flex flex-1 gap-1'>
 					<div className='flex flex-col gap-1 w-full'>
-						<div className='skeleton h-4 w-12 rounded-full'></div>
 						<div className='skeleton h-4 w-16 rounded-full'></div>
 						<div className='skeleton h-40 w-full relative'>
 							<div className='skeleton h-20 w-20 rounded-full border absolute -bottom-10 left-3'></div>

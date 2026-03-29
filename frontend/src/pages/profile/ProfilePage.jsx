@@ -1,11 +1,9 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
-
-import { POSTS } from "../../utils/db/dummy";
 
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -13,9 +11,11 @@ import { FaLink } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { useQuery } from "@tanstack/react-query";
 import { formatMemberSinceDate } from "../../utils/date";
+
 import useAuthUser from "../../hooks/useAuthUser";
 import useFollow from "../../hooks/useFollow";
-import { useEffect } from "react";
+import useUpdateUserProfile from "../../hooks/useUpdateUserProfile";
+
 
 const ProfilePage = () => {
 	const { username } = useParams();
@@ -43,9 +43,12 @@ const ProfilePage = () => {
 			}
 		}
 	});
+
 	
 	const isMyProfile = authUser._id === user?._id;
 	const amIFollowing = authUser.following.includes(user?._id);	
+
+	const { updateProfile, isUpdatingProfile } = useUpdateUserProfile();
 
 	const handleImgChange = (e, state) => {
 		const file = e.target.files[0];
@@ -78,7 +81,6 @@ const ProfilePage = () => {
 								</Link>
 								<div className='flex flex-col'>
 									<p className='font-bold text-lg'>{user?.fullName}</p>
-									<span className='text-sm text-slate-500'>{POSTS?.length} posts</span>
 								</div>
 							</div>
 							{/* COVER IMG */}
@@ -135,15 +137,19 @@ const ProfilePage = () => {
 									>
 										{isPending && "Loading..."}
 										{!isPending && !amIFollowing && "Follow"}
-										{!isPending && amIFollowing && "Following"}
+										{!isPending && amIFollowing && "UnFollow"}
 									</button>
 								)}
 								{(coverImg || profileImg) && (
 									<button
 										className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-										onClick={() => alert("Profile updated successfully")}
+										onClick={ async () => {
+											await updateProfile({coverImg, profileImg});
+											setCoverImg(null);
+											setProfileImg(null);
+										}}
 									>
-										Update
+										{isUpdatingProfile ? "Updating..." : "Update"}
 									</button>
 								)}
 							</div>
